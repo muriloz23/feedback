@@ -1,0 +1,184 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gato Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <style>
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #2d3748;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <header class="w-full p-4 border-b border-gray-700 bg-transparent">
+        <div class="container mx-auto flex justify-end items-center">
+            <div class="relative">
+                <button id="menu-button" class="text-white focus:outline-none">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg">
+                    <a href="#" onclick="scrollToSection('home')" class="block px-4 py-2 text-white hover:bg-gray-700">Início</a>
+                    <a href="support.html" target="_blank" class="block px-4 py-2 text-white hover:bg-gray-700">Suporte</a>
+                    <a href="#" onclick="showFeedbacks()" class="block px-4 py-2 text-white hover:bg-gray-700">Avaliações</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="home" class="flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-6xl font-bold floating">Bem vindo a</h1>
+        <h2 class="text-6xl font-bold text-blue-900 floating">Gato Store</h2>
+        <a href="https://discord.gg/J3ZHQwnVTp" class="mt-8 px-6 py-3 bg-blue-900 text-white rounded-lg text-lg">Entrar na Loja</a>
+    </div>
+
+    <div class="container mx-auto py-16">
+        <div class="fade-in" id="section1">
+            <h3 class="text-4xl font-bold mb-4">Por que entrar na loja?</h3>
+            <p class="text-lg">Oferecemos produtos de altissima qualidade, não deixando a desejar, com um suporte 25/48h para te ajudar a solucionar seus plobemas!</p>
+        </div>
+        <div class="fade-in mt-16" id="section2">
+            <h3 class="text-4xl font-bold mb-4">O que temos na nossa loja?</h3>
+            <p class="text-lg">Nossa loja possui uma ampla gama de produtos, incluindo:</p>
+            <ul class="list-disc list-inside">
+                <li>Nitros para discord</li>
+                <li>Pack & métodos</li>
+                <li>Impulsos mensal & trimensal</li>
+                <li>Link nitro mensal & trirmsnal</li>
+                <li>Modelo de loja único para iniciantes</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mx-auto py-16" id="feedback-section">
+        <div class="fade-in">
+            <h3 class="text-4xl font-bold mb-4">Deixe seu Feedback</h3>
+            <form id="feedback-form" class="bg-gray-800 p-8 rounded-lg">
+                <div class="mb-4">
+                    <label for="name" class="block text-lg font-medium">Nome</label>
+                    <input type="text" id="name" class="w-full p-2 mt-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
+                </div>
+                <div class="mb-4">
+                    <label for="message" class="block text-lg font-medium">Mensagem</label>
+                    <textarea id="message" rows="4" class="w-full p-2 mt-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900"></textarea>
+                </div>
+                <button type="submit" class="px-6 py-3 bg-blue-900 text-white rounded-lg text-lg">Enviar Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFeedbacks()">&times;</span>
+            <h3 class="text-4xl font-bold mb-4">Feedbacks de Clientes</h3>
+            <div id="feedbacks" class="space-y-4">
+                <!-- Feedbacks will be appended here -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="w-full py-4 bg-gray-800 text-center">
+        <p class="text-xs text-gray-400">Gato Store, todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        document.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.fade-in');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    section.classList.add('visible');
+                }
+            });
+        });
+
+        document.getElementById('feedback-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+
+            if (name && message) {
+                const feedbacksContainer = document.getElementById('feedbacks');
+                const feedbackElement = document.createElement('div');
+                feedbackElement.classList.add('bg-gray-800', 'p-4', 'rounded-lg');
+                feedbackElement.innerHTML = `
+                    <h4 class="text-lg font-bold">${name}</h4>
+                    <p class="mt-2">${message}</p>
+                `;
+                feedbacksContainer.appendChild(feedbackElement);
+
+                // Clear the form
+                document.getElementById('name').value = '';
+                document.getElementById('message').value = '';
+            }
+        });
+
+        function showFeedbacks() {
+            const modal = document.getElementById('feedback-modal');
+            modal.style.display = 'block';
+        }
+
+        function closeFeedbacks() {
+            const modal = document.getElementById('feedback-modal');
+            modal.style.display = 'none';
+        }
+
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('feedback-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
